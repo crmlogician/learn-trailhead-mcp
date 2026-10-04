@@ -14,9 +14,9 @@ The demo walks through three stages for each client: **Choose a client → Set i
 
 | Client | Best for | You need |
 |---|---|---|
-| 💬 **Slackbot** | Ask Trailhead from your team chat | Slack workspace and admin approval |
 | 🤖 [**Agentforce**](03-agentforce.md) | Ground your agents in trusted content | A Salesforce org with Setup access |
-| 🧠 **Claude / Claude Code** | Use it in chat or in your terminal | Claude Desktop or Claude Code |
+| 🧠 [**Claude**](04-claude-code.md) (web, Desktop & Claude Code) | Chat on the web or desktop, or use it in your terminal | A Claude account, or Claude Code |
+| 💬 **Slackbot** | Ask Trailhead from your team chat | Slack workspace and admin approval |
 | ⌨️ **Cursor** | Look things up while you code | Cursor installed |
 
 ## Other clients
@@ -25,7 +25,7 @@ Any client that supports Streamable HTTP should work with the same endpoint, inc
 
 ## How to choose
 
-- **Presenting to admins or business users?** Use Slackbot or Agentforce, so nobody needs to install anything.
+- **Presenting to admins or business users?** Use Slackbot, Agentforce or Claude on the web, so nobody needs to install anything.
 - **Presenting to developers?** Use Claude Code or Cursor, so they see answers next to their code.
 - **Building agents?** Use Agentforce, so the agent's answers cite Trailhead modules.
 

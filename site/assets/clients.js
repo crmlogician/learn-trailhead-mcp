@@ -17,8 +17,24 @@ var CL = [
       "Onboarding agents that point new hires to the right content",
       "Enablement agents that cite official modules"
     ] },
+  { n: "Claude",               ic: "🧠", best: "Chat on the web or desktop, or use it in your terminal", need: "A Claude account, or Claude Code",
+    how: [
+      "Claude web or Desktop: open Settings, then Connectors, and click Add custom connector.",
+      "Name it Trailhead, paste the Connector URL below and click Add. It also appears in Claude Desktop.",
+      "In a chat, open the + (tools) menu and turn on Trailhead.",
+      "Claude Code: run the command below in your terminal. The user scope makes it available in every project."
+    ],
+    code: [
+      ["Connector URL (claude.ai and Desktop)", URL_],
+      ["Claude Code", "claude mcp add --transport http --scope user trailhead " + URL_]
+    ],
+    say: "What does Trailhead say about Apex bulkification best practices?",
+    tips: [
+      "You should see Claude call a Trailhead tool and cite Trailhead content in the answer",
+      "Team or Enterprise plan? An owner may need to add the connector under Organization settings first",
+      "Claude Code not working? Check the command has --transport http, then run claude mcp list"
+    ] },
   { n: "Slackbot",             ic: "💬", best: "Ask Trailhead from your team chat",       need: "Slack workspace and admin approval" },
-  { n: "Claude / Claude Code", ic: "🧠", best: "Use it in chat or in your terminal",      need: "Claude Desktop or Claude Code" },
   { n: "Cursor",               ic: "⌨️", best: "Look things up while you code",           need: "Cursor installed" }
 ];
 
@@ -63,7 +79,9 @@ function setup(c) {
       return '<button class="ckb' + (d ? " d" : "") + '" type="button" data-k="' + j + '" aria-pressed="' + !!d + '"><i>' + (d ? "✓" : j + 1) + "</i><span>" + esc(s) + "</span></button>";
     }).join("") + "</div>" +
     (c.link ? '<a class="s" href="' + esc(c.link.href) + '" target="_blank" rel="noopener">' + esc(c.link.label) + " ↗</a>" : "") +
-    c.code.map(function (k) { return '<p class="lbl" style="margin-top:12px">' + esc(k[0]) + "</p><pre>" + esc(k[1]) + "</pre>"; }).join("") + "</div>" +
+    c.code.map(function (k) {
+      return '<div class="cl"><p class="lbl">' + esc(k[0]) + '</p><button class="s cp" type="button" data-copy="' + esc(k[1]) + '">Copy</button></div><pre>' + esc(k[1]) + "</pre>";
+    }).join("") + "</div>" +
     '<div class="card"><h2>What to do</h2><p class="lbl">Try this prompt</p><div class="say">' + esc(c.say) + "</div>" +
     c.tips.map(function (t) { return '<div class="tip">' + esc(t) + "</div>"; }).join("") + demo() + "</div></div>" +
     '<div class="acts"><button class="s" type="button" data-a="pick">← Choose another</button><button class="p" type="button" data-a="sum">See summary →</button></div>';
