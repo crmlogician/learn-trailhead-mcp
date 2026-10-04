@@ -11,13 +11,13 @@ Each step is added on its own branch and merged through a pull request.
 | # | Step | Section | Doc |
 |---|------|-----------|-----|
 | 1 | Intro & overview | `#intro` | [docs/01-intro-overview.md](docs/01-intro-overview.md) |
-| 2 | Hands-on with supported clients | _coming soon_ | _coming soon_ |
+| 2 | Hands-on with supported clients | `#clients` | [docs/02-supported-clients.md](docs/02-supported-clients.md) |
 
 ## Repo layout
 
 ```
 site/index.html    Demo site: one page, one <section> per step
-site/assets/       Shared styles.css and app.js
+site/assets/       Shared styles.css and app.js; clients.js holds client data
 docs/              Markdown write-up for each step
 ```
 
