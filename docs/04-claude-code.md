@@ -61,11 +61,12 @@ These are illustrative samples; real results come from the live Trailhead catalo
 
 | | |
 |---|---|
-| **Setup** | 4 steps: add a custom connector and turn it on in chat for claude.ai and Desktop, or run one terminal command for Claude Code |
+| **Setup** | Pick one path: 3 steps for claude.ai and Desktop (add a custom connector, turn it on in chat), or 1 terminal command for Claude Code |
 | **Endpoint** | `https://mcp.trailhead.salesforce.com/mcp` |
-| **Transport** | `http` (Streamable HTTP), no authentication |
+| **Authentication** | None (Streamable HTTP, `--transport http`) |
 | **First prompt** | What does Trailhead say about Apex bulkification best practices? |
 | **What you can do now** | Search Trailhead by topic, role and level, or fetch a full badge by name. Say "Use Trailhead MCP to…" for best results. |
+| **Next step** | Start prompts with "Use Trailhead MCP to…" so Claude picks the Trailhead tools. |
 
 ## Presenter notes
 

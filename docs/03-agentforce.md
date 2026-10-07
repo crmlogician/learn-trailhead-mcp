@@ -50,8 +50,9 @@ These are illustrative samples; real results come from the live Trailhead catalo
 | **Setup** | 5 steps in Setup → Registered MCP Servers |
 | **Endpoint** | `https://mcp.trailhead.salesforce.com/mcp` |
 | **Authentication** | None |
-| **First prompt** | Ground your agent so it answers learning questions with cited Trailhead modules. |
+| **Goal** | Ground your agent so it answers learning questions with cited Trailhead modules. |
 | **What you can do now** | Search Trailhead by topic, role and level, or fetch a full badge by name. Say "Use Trailhead MCP to…" for best results. |
+| **Next step** | Add the Trailhead tools to an agent topic and test it in Agentforce Builder. |
 
 ## Presenter notes
 
