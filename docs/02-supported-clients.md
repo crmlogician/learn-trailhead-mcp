@@ -16,7 +16,7 @@ The demo walks through three stages for each client: **Choose a client → Set i
 |---|---|---|
 | 🤖 [**Agentforce**](03-agentforce.md) | Ground your agents in trusted content | A Salesforce org with Setup access |
 | 🧠 [**Claude**](04-claude-code.md) (web, Desktop & Claude Code) | Chat on the web or desktop, or use it in your terminal | A Claude account, or Claude Code |
-| 💬 **Slackbot** | Ask Trailhead from your team chat | Slack workspace and admin approval |
+| 💬 [**Slackbot**](05-slackbot.md) | Ask Trailhead from your team chat | Slack workspace and admin approval |
 | ⌨️ **Cursor** | Look things up while you code | Cursor installed |
 
 ## Other clients

@@ -14,6 +14,7 @@ Each step is added on its own branch and merged through a pull request.
 | 2 | Hands-on with supported clients | `#clients` | [docs/02-supported-clients.md](docs/02-supported-clients.md) |
 | 3 | Client: Agentforce | `#clients` → Agentforce | [docs/03-agentforce.md](docs/03-agentforce.md) |
 | 4 | Client: Claude (web, Desktop & Claude Code) | `#clients` → Claude | [docs/04-claude-code.md](docs/04-claude-code.md) |
+| 5 | Client: Slackbot | `#clients` → Slackbot | [docs/05-slackbot.md](docs/05-slackbot.md) |
 
 ## Repo layout
 
