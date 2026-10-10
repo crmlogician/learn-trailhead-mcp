@@ -37,20 +37,28 @@ var CL = [
       "Team or Enterprise plan? An owner may need to add the connector under Organization settings first",
       "Claude Code not working? Check the command has --transport http, then run claude mcp list"
     ] },
-  { n: "Slackbot",             ic: "💬", best: "Ask Trailhead from your team chat",       need: "Slack workspace and admin approval",
+  { n: "Slackbot",             ic: "💬", best: "Ask Trailhead from your team chat",       need: "A Slack workspace where you can create apps",
     how: [
-      "Ask your Slack admin to enable the Trailhead MCP app for your workspace.",
-      "Go to api.slack.com/apps, choose Create New App, then From a manifest, and pick your workspace.",
-      "Paste a manifest that turns MCP on and lists the Trailhead server with no authentication (key settings below), then create the app.",
-      "Open Slackbot, click the App integrations icon in the message box and add Trailhead MCP. Refresh Slack if you don't see the icon.",
-      "Under Manage Apps, open Trailhead MCP and set its tools to Always allow."
+      "Go to [api.slack.com/apps](https://api.slack.com/apps) and click Create New App.",
+      "Choose From a manifest, pick your workspace and click Next.",
+      "Paste the Slack app manifest below (JSON), review the settings on the summary, then click Create.",
+      "Open any Slackbot conversation and click the App integrations icon in the message box. Refresh Slack if you don't see it.",
+      "Find Trailhead MCP and click it to add it.",
+      "Go to Manage Apps, open Trailhead MCP and set all its tools to Always allow."
     ],
-    code: [["Key manifest settings", "bot scopes: mcp:connect, commands\nis_mcp_enabled: true\nmcp_servers → Trailhead MCP\n  url: https://mcp.trailhead.salesforce.com\n  auth_type: no_auth"]],
+    code: [["Slack app manifest (JSON)", JSON.stringify({
+      display_information: { name: "Trailhead MCP App", description: "Interact with Trailhead via MCP", background_color: "#1d7c00" },
+      features: { bot_user: { display_name: "Trailhead MCP App", always_online: false } },
+      oauth_config: { scopes: { bot: ["mcp:connect", "commands"] }, pkce_enabled: false },
+      settings: { org_deploy_enabled: false, socket_mode_enabled: false, token_rotation_enabled: false, is_mcp_enabled: true },
+      mcp_servers: { "Trailhead MCP": { url: "https://mcp.trailhead.salesforce.com", auth_type: "no_auth" } }
+    }, null, 2)]],
     say: "Use Trailhead MCP to find beginner content on Salesforce Flow.",
     next: "Share the app with your channel so teammates can ask Trailhead too.",
     tips: [
       "Always allow stops Slackbot asking permission on every request",
-      "Icon missing? Hard refresh Slack (Cmd+Shift+R or Ctrl+Shift+R)"
+      "Icon missing? Hard refresh Slack (Cmd+Shift+R or Ctrl+Shift+R)",
+      "Can't create apps in your workspace? Ask your Slack admin for access"
     ] }
 ];
 
@@ -61,10 +69,17 @@ var DM = [
   { p: "Find Agentforce content for developers",   t: "content_search", a: '{ "query": "Agentforce", "role": "Developer" }',          r: [["Build Agentforce Solutions with Pro-Code Tools", "Learning path"]] }
 ];
 
-var ci = -1, st = 1, di = 0, dn = {};
+var ci = -1, st = 1, di = 0, dn = {}, op = {};
 var STAGES = ["Choose a client", "Set it up", "Summary"];
+var FOLD = 10; /* code blocks longer than this many lines start collapsed */
+var ICO = {
+  more: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9 3h4v4M13 3L8.5 7.5M7 13H3V9M3 13l4.5-4.5"/></svg>',
+  less: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9 3v4h4M9 7l4-4M7 13V9H3M7 9l-4 4"/></svg>'
+};
 
 function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+/* Escape a step and turn [text](https://…) into an external link. */
+function md(s) { return esc(s).replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1 ↗</a>'); }
 function ready(c) { return !!(c && c.how); }
 function nd(i) { return dn[i] ? Object.keys(dn[i]).length : 0; }
 
@@ -102,17 +117,25 @@ function steps(c) {
   return '<div class="lst">' + c.how.map(function (s, j) {
     var d = dn[ci] && dn[ci][j],
       p = (c.paths || []).filter(function (x) { return x.s[0] === j; })[0];
-    return (p ? '<p class="lbl pth">' + esc(p.n) + "</p>" : "") + '<button class="ckb' + (d ? " d" : "") + '" type="button" data-k="' + j + '" aria-pressed="' + !!d + '"><i>' + (d ? "✓" : j + 1) + "</i><span>" + esc(s) + "</span></button>";
+    /* A div, not a button, so a step can hold a link. */
+    return (p ? '<p class="lbl pth">' + esc(p.n) + "</p>" : "") + '<div class="ckb' + (d ? " d" : "") + '" role="button" tabindex="0" data-k="' + j + '" aria-pressed="' + !!d + '"><i>' + (d ? "✓" : j + 1) + "</i><span>" + md(s) + "</span></div>";
   }).join("") + "</div>";
+}
+
+/* Code block with a Copy button; long blocks collapse behind a Show more / Show less pill. */
+function code(k, i) {
+  var id = ci + ":" + i, long = k[1].split("\n").length > FOLD, open = op[id],
+    pre = "<pre>" + esc(k[1]) + "</pre>";
+  return '<div class="cl"><p class="lbl">' + esc(k[0]) + '</p><button class="s cp" type="button" data-copy="' + esc(k[1]) + '">Copy</button></div>' +
+    (long ? '<div class="fold' + (open ? "" : " shut") + '">' + pre +
+      '<button class="more" type="button" data-f="' + id + '" aria-expanded="' + !!open + '">' + (open ? ICO.less + "Show less" : ICO.more + "Show more") + "</button></div>" : pre);
 }
 
 function setup(c) {
   $("#hsub").textContent = "Set up " + c.n + ". Tick each step as you finish it.";
   return '<div class="g2"><div class="card"><h2>How to set it up</h2>' + steps(c) +
     (c.link ? '<a class="s" href="' + esc(c.link.href) + '" target="_blank" rel="noopener">' + esc(c.link.label) + " ↗</a>" : "") +
-    c.code.map(function (k) {
-      return '<div class="cl"><p class="lbl">' + esc(k[0]) + '</p><button class="s cp" type="button" data-copy="' + esc(k[1]) + '">Copy</button></div><pre>' + esc(k[1]) + "</pre>";
-    }).join("") + "</div>" +
+    c.code.map(code).join("") + "</div>" +
     '<div class="card"><h2>What to do</h2><p class="lbl">Try this prompt</p><div class="say">' + esc(c.say) + "</div>" +
     c.tips.map(function (t) { return '<div class="tip">' + esc(t) + "</div>"; }).join("") + demo() + "</div></div>" +
     '<div class="acts"><button class="s" type="button" data-a="pick">← Choose another</button><button class="p" type="button" data-a="sum">See summary →</button></div>';
@@ -141,15 +164,29 @@ function renderClients() {
 }
 
 document.addEventListener("click", function (e) {
-  var t = e.target.closest("button");
+  if (e.target.closest("a")) return;
+  var t = e.target.closest("button,[data-k]");
   if (!t || !t.closest("#clients")) return;
   var D = t.dataset;
   if (D.o !== undefined) { if (!ready(CL[+D.o])) return; ci = +D.o; st = 2; }
   else if (D.k !== undefined) { dn[ci] = dn[ci] || {}; if (dn[ci][D.k]) delete dn[ci][D.k]; else dn[ci][D.k] = 1; }
+  else if (D.f) { op[D.f] = !op[D.f]; }
   else if (D.a) { st = D.a === "sum" ? 3 : D.a === "back" ? 2 : 1; if (D.a !== "back") window.scrollTo(0, 0); }
   else if (D.d !== undefined) { di = +D.d; }
   else return;
   renderClients();
+});
+
+/* Steps are role="button" divs, so give them the keyboard behaviour of a button. */
+document.addEventListener("keydown", function (e) {
+  var t = e.target;
+  if (t.dataset && t.dataset.k !== undefined && (e.key === "Enter" || e.key === " ")) {
+    e.preventDefault();
+    var k = t.dataset.k;
+    t.click();
+    var n = document.querySelector('#clients [data-k="' + k + '"]');
+    if (n) n.focus();
+  }
 });
 
 renderClients();
